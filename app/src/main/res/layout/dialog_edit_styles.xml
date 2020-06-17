@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginStart="@dimen/default_side_margin"
+    android:layout_marginEnd="@dimen/default_side_margin">
+
+    <LinearLayout
+        android:padding="@dimen/default_side_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:maxHeight="500dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/edit_styles_close"
+            android:layout_width="@dimen/icon_size"
+            android:layout_gravity="end"
+            android:src="@android:drawable/ic_delete"
+           android:layout_height="@dimen/icon_size"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_style" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/FilterDesctiption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add" />
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+

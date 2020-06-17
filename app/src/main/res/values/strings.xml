@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Portable Closet</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="size">Size</string>
+    <string name="image_of_the_clothing_item">Image of the clothing item</string>
+    <string name="item_name">Item\'s Name</string>
+    <string name="item_size">Item\'s Size</string>
+    <string name="item_style">Item\'s Style</string>
+    <string name="item_color">Item\'s Color</string>
+    <string name="personal_note">Personal Note</string>
+    <string name="any_color">Any Color</string>
+    <string name="add">Add</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fab_size">48dp</dimen>
+    <dimen name="default_side_margin">16dp</dimen>
+    <dimen name="description_width">120dp</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="icon_size">48dp</dimen>
+</resources>

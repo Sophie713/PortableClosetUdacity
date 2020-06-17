@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.MainFragment">
+
+    <TextView
+        android:id="@+id/fragment_main_top_title"
+        style="@style/TopTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:paddingTop="@dimen/default_side_margin"
+        android:text="Welcome to\nPortable Closet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fragment_main_description_color"
+        style="@style/FilterDesctiption"
+        android:layout_width="@dimen/description_width"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:padding="@dimen/default_side_margin"
+        android:text="Color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_top_title" />
+
+    <TextView
+        android:id="@+id/fragment_main_description_style"
+        style="@style/FilterDesctiption"
+        android:layout_width="@dimen/description_width"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:padding="@dimen/default_side_margin"
+        android:text="Style"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_color" />
+
+    <TextView
+        android:id="@+id/fragment_main_description_size"
+        style="@style/FilterDesctiption"
+        android:layout_width="@dimen/description_width"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:padding="@dimen/default_side_margin"
+        android:text="@string/size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_style" />
+
+    <Spinner
+        android:id="@+id/fragment_main_spinner_color"
+        style="@style/SpinnerMainFr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_description_color"
+        app:layout_constraintTop_toTopOf="@id/fragment_main_description_color" />
+
+    <Spinner
+        android:id="@+id/fragment_main_spinner_style"
+        style="@style/SpinnerMainFr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_style"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_description_style"
+        app:layout_constraintTop_toTopOf="@id/fragment_main_description_style" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/fragment_main_edittext_size"
+        style="@style/SizeEditText"
+        android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/default_side_margin"
+        android:hint="@string/size"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_description_size"
+        app:layout_constraintTop_toTopOf="@id/fragment_main_description_size" />
+
+    <Button
+        android:id="@+id/fragment_main_filter_btn"
+        style="@style/Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_side_margin"
+        android:text="Filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_size" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_main_fab"
+        style="?floatingActionButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:src="@drawable/ic_plus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
