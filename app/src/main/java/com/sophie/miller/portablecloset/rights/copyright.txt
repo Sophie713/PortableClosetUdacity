@@ -1,5 +1,5 @@
 icons - credits:
 Icons by svgrepo.com :
 https://www.svgrepo.com/svg/8377/plus
-i icon = https://en.m.wikipedia.org/wiki/File:Infobox_info_icon.svg
+
 Android Developers documentation code used

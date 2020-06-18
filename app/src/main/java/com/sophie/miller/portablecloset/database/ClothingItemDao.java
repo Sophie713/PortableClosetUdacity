@@ -26,6 +26,9 @@ public interface ClothingItemDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateClItem(ClothingItem product);
 
+    @Query("UPDATE clothing_items SET style = -1 WHERE id = :id")
+    void updateStyle(int id);
+
     @Query("SELECT * FROM clothing_items WHERE id = :id")
     LiveData<ClothingItem> getClItemById(int id);
 

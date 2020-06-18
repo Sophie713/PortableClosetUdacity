@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/appwidget_mini_btn"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:background="@drawable/bckg_circle"
+        android:padding="@dimen/dp4"
+        android:src="@drawable/ic_plus" />
+
+</LinearLayout>

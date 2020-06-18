@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
+        if (getIntent().hasExtra(FragmentCodes.OPEN_FRAGMENT)) {
+            setFragment(getIntent().getIntExtra(FragmentCodes.OPEN_FRAGMENT, 0));
+        } else if (savedInstanceState == null) {
             setFragment(0);
         } else {
             currentFilter = savedInstanceState.getParcelable(CURRENT_FILTER);

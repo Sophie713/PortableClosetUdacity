@@ -20,6 +20,7 @@ import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.databinding.FragmentMainBinding;
 import com.sophie.miller.portablecloset.objects.Colors;
+import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class MainFragment extends Fragment {
                 //retrieve style if present
                 activity.currentFilter.setStyleFilter(binding.fragmentMainSpinnerStyle.getSelectedItemPosition() - 1);
                 //retrieve size if present
-                activity.currentFilter.setSizeFilter(binding.fragmentMainEdittextSize.getText().toString());
+                activity.currentFilter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
                 activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
             }
         });

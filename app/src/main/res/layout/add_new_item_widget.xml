@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent60">
+
+    <TextView
+        android:id="@+id/appwidget_normal_text"
+        style="@style/FilterDesctiption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contentDescription="@string/bought_sth_new_widget"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.15"
+        android:padding="@dimen/dp8"
+        android:text="@string/bought_sth_new_widget"
+        android:textColor="#000" />
+
+</LinearLayout>

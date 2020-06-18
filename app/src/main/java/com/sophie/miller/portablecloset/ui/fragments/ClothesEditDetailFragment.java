@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.provider.MediaStore;
@@ -15,16 +16,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.constants.IntentCodes;
+import com.sophie.miller.portablecloset.databinding.DialogEditStylesBinding;
 import com.sophie.miller.portablecloset.databinding.FragmentClothesDetailEditingBinding;
 import com.sophie.miller.portablecloset.dialogs.EditStylesDialog;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
+import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
+import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -40,6 +48,17 @@ public class ClothesEditDetailFragment extends Fragment {
     private MainActivity activity;
     //data
     private Bitmap imageBitmap;
+    //colors spinner
+    private Colors colorsObject = new Colors();
+    private ArrayAdapter<String> colorsAdapter;
+    private List<String> colors = new ArrayList<>();
+    //styles spinner
+    private ArrayAdapter<String> stylesAdapter;
+    private List<String> styles = new ArrayList<>();
+    //monitor dialog to retrieve on oriantation change
+    private boolean isDialogOpened = false;
+    private final String DIALOG_OPENED = "DIALOG_OPENED";
+    int dialogTheme = android.R.style.Theme_Light;
 
     public static ClothesEditDetailFragment newInstance() {
         return new ClothesEditDetailFragment();
@@ -55,6 +74,9 @@ public class ClothesEditDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null){
+            isDialogOpened = savedInstanceState.getBoolean(DIALOG_OPENED);
+        }
     }
 
     @Override
@@ -62,6 +84,20 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> newStyles) {
+                styles.clear();
+                styles.add("All Styles");
+                styles.addAll(newStyles);
+                styles.add(getString(R.string.edit_styles));
+                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
+                binding.fragmentDetailStyle.setAdapter(stylesAdapter);
+                setStylesListener();
+            }
+        });
+        if(isDialogOpened)
+            new EditStylesDialog(this, mViewModel, dialogTheme);
     }
 
     @Override
@@ -88,6 +124,10 @@ public class ClothesEditDetailFragment extends Fragment {
 
             }
         });
+        colors.add(getString(R.string.any_color));
+        colors.addAll(colorsObject.getAllColors());
+        colorsAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, colors);
+        binding.fragmentDetailColor.setAdapter(colorsAdapter);
     }
 
     @Override
@@ -110,7 +150,6 @@ public class ClothesEditDetailFragment extends Fragment {
     private void saveData() {//todo check if not empty!!!!!!!!
         byte[] image = new byte[0];
         //todo  LOADING start
-        //check if style exists and save  if not to styles, then get id and save to database
         //get name, size and color and save to the object. save object to the database, keep id and data
         if (imageBitmap != null) {
             image = new BitmapHandler().bitmapToByteArray(imageBitmap);
@@ -118,13 +157,12 @@ public class ClothesEditDetailFragment extends Fragment {
             //todo inform user (dialog?)
         }
         ClothingItem clothingItem = new ClothingItem(
-                getText(binding.fragmentDetailName),
+                StringHandler.getText(binding.fragmentDetailName),
                 image,
-                //todo fix
-                binding.fragmentDetailColor.getSelectedItemPosition(),
-                binding.fragmentDetailStyle.getSelectedItemPosition(),
-                getText(binding.fragmentDetailSize),
-                getText(binding.fragmentDetailNote)
+                (binding.fragmentDetailColor.getSelectedItemPosition() - 1),
+                (binding.fragmentDetailStyle.getSelectedItemPosition() - 1),
+                StringHandler.getText(binding.fragmentDetailSize),
+                StringHandler.getText(binding.fragmentDetailNote)
         );
         mViewModel.getDatabase().clothingItemDao().insertClItem(clothingItem);
         //todo make AsyncTask post to fulfill requirements
@@ -132,18 +170,31 @@ public class ClothesEditDetailFragment extends Fragment {
     }
 
     /**
-     * gets string from a view or returns ""
-     *
-     * @param v view to get string from
-     * @return
+     * styles on item selected listener for the Edit Styles Option
      */
-    private String getText(TextView v) {
-        CharSequence text = v.getText();
-        if (text != null) {
-            return text.toString();
-        } else {
-            return "";
-        }
+    private void setStylesListener() {
+        binding.fragmentDetailStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == styles.size() - 1) {
+                    try {
+                        new EditStylesDialog(ClothesEditDetailFragment.this, mViewModel, dialogTheme);
+                        isDialogOpened = true;
+                    } catch (Exception ignored) {
+                    }
+                    binding.fragmentDetailStyle.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(DIALOG_OPENED, isDialogOpened);
+    }
 }

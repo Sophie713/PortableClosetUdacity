@@ -3,12 +3,10 @@
     package="com.sophie.miller.portablecloset">
 
     <!-- permissions -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- features -->
-    <uses-feature android:name="android.hardware.camera"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- features -->
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
-
 
     <application
         android:allowBackup="true"
@@ -17,6 +15,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".widget.AddNewItemMiniWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/add_new_item_mini_widget_info" />
+        </receiver>
+        <receiver android:name=".widget.AddNewItemWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/add_new_item_widget_info" />
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.sophie.miller.portablecloset.fileprovider"
@@ -26,7 +43,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".MainActivity">
+
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,4 +54,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

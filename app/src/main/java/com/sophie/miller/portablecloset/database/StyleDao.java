@@ -22,14 +22,25 @@ public interface StyleDao {
     LiveData<List<String>> loadStyleNames();
 
     @Insert
-    void insertStyle(ClothingItem product);
+    void insertStyle(Style style);
 
     @Delete
-    void deleteStyle(ClothingItem product);
+    void deleteStyle(Style style);
+
+
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateStyle(ClothingItem product);
+    void updateStyle(Style style);
+
+    @Query("DELETE FROM styles WHERE id = :id")
+    void deleteStyleAt(int id);
 
     @Query("SELECT name FROM styles WHERE id = :id")
     LiveData<String> getStyle(int id);
+
+    @Query("SELECT id FROM styles WHERE name = :name")
+    int getStyleId(String name);
+
+    @Query("SELECT COUNT (name) FROM styles WHERE name = :name")
+    int checkIfExists(String name);
 }
