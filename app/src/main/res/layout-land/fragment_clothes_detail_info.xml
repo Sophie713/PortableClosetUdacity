@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_detail_main_layout"
     tools:context=".ui.fragments.ClothesDetailInfoFragment">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -14,7 +15,6 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/image_of_the_clothing_item"
         android:maxWidth="@dimen/max_img_detail_width"
-        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fragment_detail_scrollv_only_landscape"
         app:layout_constraintHorizontal_chainStyle="spread"

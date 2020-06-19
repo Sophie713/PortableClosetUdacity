@@ -68,6 +68,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentMainBinding.bind(view);
+        binding.main.setOnClickListener(v-> activity.hideKeyboard());
         //view model//view model
         mViewModel = activity.getViewModel();
         mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {

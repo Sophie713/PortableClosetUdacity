@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.sophie.miller.portablecloset.dialogs.EditStylesDialog;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
+import com.sophie.miller.portablecloset.utils.ExampleAsyncTask;
 import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
@@ -122,6 +124,7 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentClothesDetailEditingBinding.bind(view);
         //set on clicks
+        binding.fragmentDetailMainLayout.setOnClickListener(v-> activity.hideKeyboard());
         binding.fragmentDetailImage.setOnClickListener(v -> {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
@@ -185,8 +188,10 @@ public class ClothesEditDetailFragment extends Fragment {
         Notifications.log("info save: " + new Colors().colorsMap.get(clothingItem.getColor()));
         if (editingId != -1)
             clothingItem.setId(editingId);
+        else {
+            new ExampleAsyncTask().execute();
+        }
         editingId = mViewModel.getDatabase().clothingItemDao().insertClItem(clothingItem);
-        //todo make AsyncTask post to fulfill requirements
 
     }
 
@@ -258,7 +263,6 @@ public class ClothesEditDetailFragment extends Fragment {
      * @return
      */
     private int getStyleIndex() {
-        Notifications.log("dize styles: " + styles.size());
         String styleName = mViewModel.database.styleDao().getStyleName(item.getStyle());
         for (int i = 0; i < styles.size(); i++) {
             if (styles.get(i).equals(styleName)) {

@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "10232321614-a4insrq01djdnm013e3nk3im37m74isf.apps.googleusercontent.com",
+          "client_id": "10232321614-mh38fahslq88f5ncis294r7uj9oqnpva.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sophie.miller.portablecloset",
-            "certificate_hash": "a713881fe8214e51bf9db02263079f8d588ea103"
+            "certificate_hash": "d1bbc0d9fbe663d83e0e68ff04c15e572598bcd2"
           }
         },
         {

@@ -73,6 +73,7 @@ public class ClothesDetailInfoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentClothesDetailInfoBinding.bind(view);
         //set on clicks
+        binding.fragmentDetailMainLayout.setOnClickListener(v-> activity.hideKeyboard());
         binding.fragmentDetailFab.setOnClickListener(v -> {
             activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
         });

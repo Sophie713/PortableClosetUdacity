@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/fragment_detail_main_layout"
     android:layout_height="match_parent"
     tools:context=".ui.fragments.ClothesEditDetailFragment">
 
@@ -13,7 +14,6 @@
         android:layout_margin="@dimen/default_side_margin"
         android:adjustViewBounds="true"
         android:contentDescription="@string/image_of_the_clothing_item"
-        android:scaleType="centerCrop"
         app:layout_constraintEnd_toStartOf="@+id/fragment_detail_layout"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"

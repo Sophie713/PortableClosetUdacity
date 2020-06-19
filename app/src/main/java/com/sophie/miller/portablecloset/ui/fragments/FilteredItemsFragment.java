@@ -132,7 +132,7 @@ public class FilteredItemsFragment extends Fragment {
         binding.fragmentItemsFab.setOnClickListener(v -> {
             activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
         });
-
+        binding.fragmentItemsMainLayout.setOnClickListener(v->activity.hideKeyboard());
     }
 
     /**

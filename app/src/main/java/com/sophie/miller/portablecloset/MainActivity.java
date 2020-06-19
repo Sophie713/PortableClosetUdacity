@@ -7,8 +7,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
@@ -18,6 +21,7 @@ import com.sophie.miller.portablecloset.ui.fragments.ClothesDetailInfoFragment;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesEditDetailFragment;
 import com.sophie.miller.portablecloset.ui.fragments.FilteredItemsFragment;
 import com.sophie.miller.portablecloset.ui.fragments.MainFragment;
+import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
@@ -152,5 +156,19 @@ public class MainActivity extends AppCompatActivity {
         return mViewModel;
     }
 
+    /**
+     * hide keyboard
+     */
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }
+
 
