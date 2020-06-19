@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "10232321614",
+    "firebase_url": "https://portablecloset-fb912.firebaseio.com",
+    "project_id": "portablecloset-fb912",
+    "storage_bucket": "portablecloset-fb912.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10232321614:android:a88fa8d5e7144fc61ad51f",
+        "android_client_info": {
+          "package_name": "com.sophie.miller.portablecloset"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "10232321614-a4insrq01djdnm013e3nk3im37m74isf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sophie.miller.portablecloset",
+            "certificate_hash": "a713881fe8214e51bf9db02263079f8d588ea103"
+          }
+        },
+        {
+          "client_id": "10232321614-a3ml2nquscbf9qvnrfhe8n886plakdav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXBEn6ZCJDkGkf6uQxtUxAj15q0APYeOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "10232321614-a3ml2nquscbf9qvnrfhe8n886plakdav.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

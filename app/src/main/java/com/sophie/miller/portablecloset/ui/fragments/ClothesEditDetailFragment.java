@@ -1,14 +1,17 @@
 package com.sophie.miller.portablecloset.ui.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.provider.MediaStore;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 
 import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
+import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.constants.IntentCodes;
 import com.sophie.miller.portablecloset.databinding.DialogEditStylesBinding;
 import com.sophie.miller.portablecloset.databinding.FragmentClothesDetailEditingBinding;
@@ -58,7 +62,12 @@ public class ClothesEditDetailFragment extends Fragment {
     //monitor dialog to retrieve on oriantation change
     private boolean isDialogOpened = false;
     private final String DIALOG_OPENED = "DIALOG_OPENED";
-    int dialogTheme = android.R.style.Theme_Light;
+    private int dialogTheme = android.R.style.Theme_Light;
+    //if editing not adding
+    private long editingId = -1;
+    private static final String EDITING_ID = "EDITING_ID";
+    //Clothing item
+    private ClothingItem item;
 
     public static ClothesEditDetailFragment newInstance() {
         return new ClothesEditDetailFragment();
@@ -68,66 +77,65 @@ public class ClothesEditDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_clothes_detail_editing, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
+            editingId = savedInstanceState.getLong(EDITING_ID);
             isDialogOpened = savedInstanceState.getBoolean(DIALOG_OPENED);
+            if (isDialogOpened)
+                try {
+                    new EditStylesDialog(this, mViewModel, dialogTheme);
+                } catch (Exception ignored) {
+                }
+        } else {
+            if (activity != null) {
+                editingId = activity.getDetailId();
+            }
         }
+        return inflater.inflate(R.layout.fragment_clothes_detail_editing, container, false);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mViewModel = activity.getViewModel();
         mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> newStyles) {
                 styles.clear();
-                styles.add("All Styles");
+                styles.add(getString(R.string.all_styles));
                 styles.addAll(newStyles);
                 styles.add(getString(R.string.edit_styles));
                 stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
                 binding.fragmentDetailStyle.setAdapter(stylesAdapter);
-                setStylesListener();
             }
         });
-        if(isDialogOpened)
-            new EditStylesDialog(this, mViewModel, dialogTheme);
+        if (item != null) {
+            binding.fragmentDetailStyle.setSelection(item.getStyle() + 1);
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentClothesDetailEditingBinding.bind(view);
-        //set up on clicks
-        binding.fragmentDetailImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo if image not null ask first?
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, IntentCodes.REQUEST_IMAGE_CAPTURE);
-                }
-
+        //set on clicks
+        binding.fragmentDetailImage.setOnClickListener(v -> {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, IntentCodes.REQUEST_IMAGE_CAPTURE);
             }
         });
-        binding.fragmentDetailFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //todo switch based on editing
-                saveData();
-
-            }
+        binding.fragmentDetailFab.setOnClickListener(v -> {
+            saveData();
+            activity.setDetailId(editingId);
+            activity.setFragment(FragmentCodes.DETAIL_INFO_FRAGMENT);
         });
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
         colorsAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, colors);
         binding.fragmentDetailColor.setAdapter(colorsAdapter);
+        setStylesListener();
+        fillUI();
     }
 
     @Override
@@ -147,14 +155,13 @@ public class ClothesEditDetailFragment extends Fragment {
     /**
      * save data to the database
      */
-    private void saveData() {//todo check if not empty!!!!!!!!
-        byte[] image = new byte[0];
-        //todo  LOADING start
-        //get name, size and color and save to the object. save object to the database, keep id and data
+    private void saveData() {
+        byte[] image;
         if (imageBitmap != null) {
             image = new BitmapHandler().bitmapToByteArray(imageBitmap);
         } else {
-            //todo inform user (dialog?)
+            Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sadface);
+            image = new BitmapHandler().bitmapToByteArray(bitmap);
         }
         ClothingItem clothingItem = new ClothingItem(
                 StringHandler.getText(binding.fragmentDetailName),
@@ -164,7 +171,7 @@ public class ClothesEditDetailFragment extends Fragment {
                 StringHandler.getText(binding.fragmentDetailSize),
                 StringHandler.getText(binding.fragmentDetailNote)
         );
-        mViewModel.getDatabase().clothingItemDao().insertClItem(clothingItem);
+        editingId = mViewModel.getDatabase().clothingItemDao().insertClItem(clothingItem);
         //todo make AsyncTask post to fulfill requirements
 
     }
@@ -196,5 +203,30 @@ public class ClothesEditDetailFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(DIALOG_OPENED, isDialogOpened);
+        outState.putLong(EDITING_ID, editingId);
     }
+
+    /**
+     * set boolean when dialog is closed
+     */
+    public void dialogClosed() {
+        isDialogOpened = false;
+    }
+
+    /**
+     * fill info if editing existing item
+     */
+    private void fillUI() {
+        if (editingId > -1) {
+            item = mViewModel.database.clothingItemDao().getClItemById(editingId);
+            binding.fragmentDetailName.setText(item.getName());
+            imageBitmap = new BitmapHandler().byteArrayToBitmap(item.getImage());
+            binding.fragmentDetailImage.setImageBitmap(imageBitmap);
+            binding.fragmentDetailColor.setSelection(item.getColor(), true);
+            binding.fragmentDetailStyle.setSelection(item.getStyle() + 1, true);
+            binding.fragmentDetailSize.setText(item.getSize());
+            binding.fragmentDetailNote.setText(item.getNote());
+        }
+    }
+
 }

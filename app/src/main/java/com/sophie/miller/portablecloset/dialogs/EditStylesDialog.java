@@ -23,6 +23,7 @@ import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.databinding.DialogEditStylesBinding;
 import com.sophie.miller.portablecloset.databinding.ItemStyleBinding;
 import com.sophie.miller.portablecloset.objects.Style;
+import com.sophie.miller.portablecloset.ui.fragments.ClothesEditDetailFragment;
 import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
@@ -66,12 +67,15 @@ public class EditStylesDialog extends Dialog implements View.OnClickListener {
 
     }
     /**
-     *
+     * set dialogClosed in the fragment
      *
      */
     @Override
     public void dismiss() {
         super.dismiss();
+        if (fragment instanceof ClothesEditDetailFragment) {
+            ((ClothesEditDetailFragment) fragment).dialogClosed();
+        }
     }
 
     @Override
@@ -127,7 +131,7 @@ class StylesDialogAdapter extends RecyclerView.Adapter<StylesDialogAdapter.Style
                     viewModel.database.styleDao().deleteStyleAt(index);
                     viewModel.database.clothingItemDao().updateStyle(index);
                 } else {
-                    Notifications.makeToast(context, "Tap again to confirm.");
+                    Notifications.makeToast(context,  context.getString(R.string.confirm_delete));
                     lastDelete = viewModel.database.styleDao().getStyleId(stylesList.get(position));
                     (new Handler()).postDelayed(new Runnable() {
                         @Override

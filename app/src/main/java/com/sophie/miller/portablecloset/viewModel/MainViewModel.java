@@ -21,31 +21,26 @@ public class MainViewModel extends AndroidViewModel {
     //database
     public ClothesDatabase database;
     //current clothes filter to get data from
-    public ClothesFilter clothesFilter = new ClothesFilter();
+    private ClothesFilter clothesFilter = new ClothesFilter();
     //filtered clothes
     private MutableLiveData<ClothesFilter> filter = new MutableLiveData<>();
     private LiveData<List<ClothingItem>> filteredClothes;
     //styles lists
-    private LiveData<List<Style>> savedStyles;
     private LiveData<List<String>> styleNames;
 
-    public MainViewModel(@NonNull Application application) {
+    MainViewModel(@NonNull Application application) {
         super(application);
         database = ClothesDatabase.getInstance(this.getApplication());
-        //filteredClothes = database.clothingItemDao().loadAllClothes();
-        savedStyles = database.styleDao().loadAllStyles();
         styleNames = database.styleDao().loadStyleNames();
         //set default filter value
-        filter.setValue(clothesFilter);
+        //filter.postValue(clothesFilter);
         filteredClothes = Transformations.switchMap(filter, f -> filterClothes());
-
     }
 
     /**
      * takes filters as parameters and returns the filtered data
-     *
      */
-    public LiveData<List<ClothingItem>> filterClothes() {
+    private LiveData<List<ClothingItem>> filterClothes() {
         filteredClothes = null;
         String size = clothesFilter.getSizeFilter();
         int style = clothesFilter.getStyleFilter();
@@ -101,8 +96,8 @@ public class MainViewModel extends AndroidViewModel {
     /**
      * set filter
      */
-    public void setFilter(ClothesFilter filter){
+    public void setFilter(ClothesFilter filter) {
         this.clothesFilter = filter;
-        this.filter.setValue(clothesFilter);
+        this.filter.postValue(clothesFilter);
     }
 }

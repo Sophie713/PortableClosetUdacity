@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.ClothesEditDetailFragment">
+    tools:context=".ui.fragments.ClothesDetailInfoFragment">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/fragment_detail_image"
@@ -32,37 +32,35 @@
         app:layout_constraintTop_toTopOf="@id/fragment_detail_image"
         app:layout_constraintVertical_bias="0.0">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/fragment_detail_name"
-            style="@style/FilterDesctiptionDetail"
+            style="@style/FilterInfoDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="Item Name"
-            android:hint="@string/item_name"
-            android:inputType="text"
             tools:text="@string/item_name" />
 
-        <com.google.android.material.textfield.TextInputEditText
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/fragment_detail_size"
-            style="@style/FilterDesctiptionDetail"
+            style="@style/FilterInfoDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="Item Name"
-            android:hint="@string/item_size"
-            android:inputType="text"
             tools:text="@string/item_size" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/fragment_detail_style"
+            style="@style/FilterInfoDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_side_margin" />
+            android:layout_marginTop="@dimen/default_side_margin"
+            tools:text="@string/item_name" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/fragment_detail_color"
+            style="@style/FilterInfoDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_side_margin" />
+            android:layout_marginTop="@dimen/default_side_margin"
+            tools:text="@string/item_name" />
 
     </LinearLayout>
 
@@ -73,21 +71,31 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="fragment_detail_layout,fragment_detail_image" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/fragment_detail_note"
         style="@style/PlainText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
-        android:autofillHints="Personal Note"
-        android:hint="@string/personal_note"
-        android:inputType="textMultiLine"
-        android:maxLength="500"
         android:paddingTop="@dimen/default_side_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/labelBarrier"
         tools:text="@string/personal_note" />
+
+    <TextView
+        android:id="@+id/fragment_detail_delete"
+        style="@style/Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:drawableStart="@drawable/ic_menu_delete"
+        android:drawablePadding="@dimen/dp4"
+        android:paddingEnd="@dimen/default_side_margin"
+        android:text="@string/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_detail_note"
+        tools:ignore="RtlSymmetry" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_detail_fab"
@@ -95,7 +103,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
         android:gravity="center_vertical"
-        android:src="@drawable/ic_menu_save"
+        android:src="@drawable/ic_edit_query"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

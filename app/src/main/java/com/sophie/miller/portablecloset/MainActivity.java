@@ -3,29 +3,38 @@ package com.sophie.miller.portablecloset;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
+import com.sophie.miller.portablecloset.ui.fragments.ClothesDetailInfoFragment;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesEditDetailFragment;
 import com.sophie.miller.portablecloset.ui.fragments.FilteredItemsFragment;
 import com.sophie.miller.portablecloset.ui.fragments.MainFragment;
+import com.sophie.miller.portablecloset.viewModel.MainViewModel;
+import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    MainFragment mainFragment;
-    ClothesEditDetailFragment clothesEditDetailFragment;
-    FilteredItemsFragment filteredItemsFragment;
     //saved state keys
     private static final String CURRENT_FILTER = "CURRENT_FILTER";
     //variables to pass between fragments
     public ClothesFilter currentFilter = new ClothesFilter();
+    private long detailId = -1;
+    //view model
+    MainViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //view model
+        MainViewModelFactory factory = new MainViewModelFactory(this.getApplication());
+        mViewModel = new ViewModelProvider(this, factory).get(MainViewModel.class);
 
         if (getIntent().hasExtra(FragmentCodes.OPEN_FRAGMENT)) {
             setFragment(getIntent().getIntExtra(FragmentCodes.OPEN_FRAGMENT, 0));
@@ -51,11 +60,17 @@ public class MainActivity extends AppCompatActivity {
     private Fragment getFragment(int fragmentNumber) {
         switch (fragmentNumber) {
             case FragmentCodes.FILTERED_LIST_FRAGMENT:
-                return filteredItemsFragment.newInstance();
+                new FilteredItemsFragment();
+                return FilteredItemsFragment.newInstance();
             case FragmentCodes.DETAIL_EDIT_FRAGMENT:
-                return clothesEditDetailFragment.newInstance();
+                new ClothesEditDetailFragment();
+                return ClothesEditDetailFragment.newInstance();
+            case FragmentCodes.DETAIL_INFO_FRAGMENT:
+                new ClothesDetailInfoFragment();
+                return ClothesDetailInfoFragment.newInstance();
             default:
-                return mainFragment.newInstance();
+                new MainFragment();
+                return MainFragment.newInstance();
         }
     }
 
@@ -71,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
                 return String.valueOf(FragmentCodes.FILTERED_LIST_FRAGMENT);
             case FragmentCodes.DETAIL_EDIT_FRAGMENT:
                 return String.valueOf(FragmentCodes.DETAIL_EDIT_FRAGMENT);
+            case FragmentCodes.DETAIL_INFO_FRAGMENT:
+                return String.valueOf(FragmentCodes.DETAIL_INFO_FRAGMENT);
             default:
                 return String.valueOf(FragmentCodes.MAIN_FRAGMENT);
         }
@@ -82,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         setFragment(FragmentCodes.MAIN_FRAGMENT);
+        detailId = -1;
     }
 
     @Override
@@ -89,5 +107,45 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable(CURRENT_FILTER, currentFilter);
     }
+
+    /**
+     * set current filter
+     */
+    public void setCurrentFilter(ClothesFilter filter) {
+        this.currentFilter = filter;
+    }
+
+    /**
+     * get current filter
+     */
+    public ClothesFilter getCurrentFilter() {
+        return currentFilter;
+    }
+
+    /**
+     * set detail id
+     */
+    public void setDetailId(long id) {
+        this.detailId = id;
+    }
+
+    /**
+     * get current filter
+     */
+    public long getDetailId() {
+        return detailId;
+    }
+
+    /**
+     * get view model
+     */
+    public MainViewModel getViewModel(){
+        if(mViewModel==null){
+            MainViewModelFactory factory = new MainViewModelFactory(this.getApplication());
+            mViewModel = new ViewModelProvider(this, factory).get(MainViewModel.class);
+        }
+        return mViewModel;
+    }
+
 }
 

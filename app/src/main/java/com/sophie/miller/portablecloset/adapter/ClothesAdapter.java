@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
+import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
@@ -25,13 +26,13 @@ import java.util.List;
 public class ClothesAdapter extends RecyclerView.Adapter<HolderClItem> {
 
     private ArrayList<ClothingItem> filteredClothes = new ArrayList<>();
-    private Context context;
+    private MainActivity activity;
     private BitmapHandler bitmapHandler = new BitmapHandler();
 
-    public ClothesAdapter(final ArrayList<ClothingItem> filteredClothes, Context context) {
+    public ClothesAdapter(final ArrayList<ClothingItem> filteredClothes, MainActivity activity) {
         this.filteredClothes.clear();
         this.filteredClothes.addAll(filteredClothes);
-        this.context = context;
+        this.activity = activity;
     }
 
     @NonNull
@@ -44,18 +45,14 @@ public class ClothesAdapter extends RecyclerView.Adapter<HolderClItem> {
 
     @Override
     public void onBindViewHolder(@NonNull HolderClItem holder, int position) {
-        final int positionF = position;
         final ClothingItem item = filteredClothes.get(position);
         holder.image.setImageBitmap(bitmapHandler.byteArrayToBitmap(item.getImage()));
         holder.title.setText(item.getName());
         //display photo or placeholder
-        holder.card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "id: " + item.getId(), Toast.LENGTH_SHORT).show();
-            }
+        holder.card.setOnClickListener(v -> {
+            activity.setDetailId(item.getId());
+            activity.setFragment(FragmentCodes.DETAIL_INFO_FRAGMENT);
         });
-
     }
 
 

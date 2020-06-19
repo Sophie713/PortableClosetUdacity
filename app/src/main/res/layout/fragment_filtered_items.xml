@@ -63,22 +63,42 @@
         app:layout_constraintTop_toBottomOf="@id/fragment_items_description_style" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:hint="@string/size"
         android:id="@+id/fragment_items_edittext_size"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="@string/size"
         app:layout_constraintEnd_toEndOf="@id/fragment_items_description_size"
         app:layout_constraintStart_toStartOf="@id/fragment_items_description_size"
         app:layout_constraintTop_toBottomOf="@id/fragment_items_description_size" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/labelBarrier"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="fragment_items_spinner_style,fragment_items_edittext_size" />
+
+    <TextView
+        android:id="@+id/fragment_items_no_items"
+        style="@style/TopTitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="@dimen/default_side_margin"
+        android:text="@string/no_items_found"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelBarrier" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_items_rec_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:padding="@dimen/default_side_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_items_spinner_color"
+        app:layout_constraintTop_toBottomOf="@id/labelBarrier"
         tools:listitem="@layout/item_card" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

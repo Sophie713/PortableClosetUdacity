@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -28,6 +29,7 @@ import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
+import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,13 +76,20 @@ public class FilteredItemsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        //view model
+        mViewModel = activity.getViewModel();
         mViewModel.listOfClothes().observe(this, new Observer<List<ClothingItem>>() {
             @Override
             public void onChanged(List<ClothingItem> clothingItems) {
                 filteredClothesList.clear();
                 if (clothingItems.size() > 0) {
+                    //todo loading screen
                     filteredClothesList.addAll(clothingItems);
+                    binding.fragmentItemsRecView.setVisibility(View.VISIBLE);
+                    binding.fragmentItemsNoItems.setVisibility(View.GONE);
+                } else {
+                    binding.fragmentItemsRecView.setVisibility(View.GONE);
+                    binding.fragmentItemsNoItems.setVisibility(View.VISIBLE);
                 }
                 updateRecView();
             }
@@ -89,13 +98,13 @@ public class FilteredItemsFragment extends Fragment {
             @Override
             public void onChanged(List<String> newStyles) {
                 styles.clear();
-                styles.add("All Styles");
+                styles.add(getString(R.string.all_styles));
                 styles.addAll(newStyles);
                 stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
                 binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
             }
         });
-        this.currentFilter = activity.currentFilter;
+        this.currentFilter = activity.getCurrentFilter();
         filterData();
     }
 
@@ -103,6 +112,7 @@ public class FilteredItemsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentFilteredItemsBinding.bind(view);
+
         //set up recyclerview
         binding.fragmentItemsRecView.setLayoutManager(new GridLayoutManager(activity, getNumberOfColumns()));
         clothesAdapter = new ClothesAdapter(filteredClothesList, activity);
@@ -218,4 +228,11 @@ public class FilteredItemsFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        activity.setCurrentFilter(currentFilter);
+    }
+
 }

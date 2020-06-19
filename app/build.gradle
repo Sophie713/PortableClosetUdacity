@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -36,6 +37,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
     // LiveData
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     //testing
@@ -51,4 +53,6 @@ dependencies {
     //ROOM
     implementation "androidx.room:room-runtime:2.2.5"
     annotationProcessor "androidx.room:room-compiler:2.2.5"
+    //google analytics
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
 }

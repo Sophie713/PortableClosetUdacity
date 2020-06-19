@@ -17,4 +17,8 @@
     <string name="style_esists">This style already exists.</string>
     <string name="bought_sth_new_widget">Bought something new? 😀\nDon\'t forget to add it.</string>
     <string name="add_widget">Add widget</string>
+    <string name="delete">Delete</string>
+    <string name="all_styles">All Styles</string>
+    <string name="no_items_found">No Items found.\nTry different selection or add them.</string>
+    <string name="confirm_delete">Tap again to confirm.</string>
 </resources>

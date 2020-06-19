@@ -18,7 +18,7 @@ public interface ClothingItemDao {
     LiveData<List<ClothingItem>> loadAllClothes();
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    void insertClItem(ClothingItem product);
+    long insertClItem(ClothingItem product);
 
     @Delete
     void deleteClItem(ClothingItem product);
@@ -30,7 +30,7 @@ public interface ClothingItemDao {
     void updateStyle(int id);
 
     @Query("SELECT * FROM clothing_items WHERE id = :id")
-    LiveData<ClothingItem> getClItemById(int id);
+    ClothingItem getClItemById(long id);
 
     @Query("SELECT * FROM clothing_items WHERE color = :color OR color = -1")
     LiveData<List<ClothingItem>> getFilteredClothesByColor(int color);

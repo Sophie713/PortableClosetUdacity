@@ -1,6 +1,7 @@
 package com.sophie.miller.portablecloset.ui.fragments;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -19,9 +20,11 @@ import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.databinding.FragmentMainBinding;
+import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
+import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,32 +62,36 @@ public class MainFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> newStyles) {
-                styles.clear();
-                styles.add("All Styles");
-                styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
-                binding.fragmentMainSpinnerStyle.setAdapter(stylesAdapter);
-            }
-        });
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentMainBinding.bind(view);
+        //view model//view model
+        mViewModel = activity.getViewModel();
+        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> newStyles) {
+                styles.clear();
+                styles.add(getString(R.string.all_styles));
+                styles.addAll(newStyles);
+                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
+                binding.fragmentMainSpinnerStyle.setAdapter(stylesAdapter);
+            }
+        });
+
         binding.fragmentMainFilterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ClothesFilter filter = new ClothesFilter();
                 //retrieve color if present
-                activity.currentFilter.setColorFilter(binding.fragmentMainSpinnerColor.getSelectedItemPosition() - 1);
+                filter.setColorFilter(binding.fragmentMainSpinnerColor.getSelectedItemPosition() - 1);
                 //retrieve style if present
-                activity.currentFilter.setStyleFilter(binding.fragmentMainSpinnerStyle.getSelectedItemPosition() - 1);
+                filter.setStyleFilter(binding.fragmentMainSpinnerStyle.getSelectedItemPosition() - 1);
                 //retrieve size if present
-                activity.currentFilter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
+                filter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
+                activity.setCurrentFilter(filter);
                 activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
             }
         });
