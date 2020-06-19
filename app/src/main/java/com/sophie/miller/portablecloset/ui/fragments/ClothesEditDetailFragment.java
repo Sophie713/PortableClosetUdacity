@@ -46,8 +46,10 @@ public class ClothesEditDetailFragment extends Fragment {
     private MainViewModel mViewModel;
     private FragmentClothesDetailEditingBinding binding;
     private MainActivity activity;
-    //data
+    private BitmapHandler bitmapHandler = new BitmapHandler();
+    //image
     private Bitmap imageBitmap;
+    private static final String IMAGE = "IMAGE";
     //colors spinner
     private Colors colorsObject = new Colors();
     private ArrayAdapter<String> colorsAdapter;
@@ -76,6 +78,10 @@ public class ClothesEditDetailFragment extends Fragment {
         if (savedInstanceState != null) {
             editingId = savedInstanceState.getLong(EDITING_ID);
             isDialogOpened = savedInstanceState.getBoolean(DIALOG_OPENED);
+            // if there was an image, retrieve it
+            if (savedInstanceState.containsKey(IMAGE)) {
+                imageBitmap = (bitmapHandler.byteArrayToBitmap(savedInstanceState.getByteArray(IMAGE)));
+            }
             if (isDialogOpened)
                 try {
                     new EditStylesDialog(this, mViewModel, dialogTheme);
@@ -103,12 +109,12 @@ public class ClothesEditDetailFragment extends Fragment {
                 styles.add(getString(R.string.edit_styles));
                 stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
                 binding.fragmentDetailStyle.setAdapter(stylesAdapter);
-                binding.fragmentDetailStyle.setSelection(getStyleIndex(), true);
+                if (item != null) {
+                    binding.fragmentDetailStyle.setSelection(getStyleIndex());
+                }
             }
         });
-        if (item != null) {
-            binding.fragmentDetailStyle.setSelection(item.getStyle() + 1);
-        }
+
     }
 
     @Override
@@ -155,10 +161,10 @@ public class ClothesEditDetailFragment extends Fragment {
     private void saveData() {
         byte[] image;
         if (imageBitmap != null) {
-            image = new BitmapHandler().bitmapToByteArray(imageBitmap);
+            image = bitmapHandler.bitmapToByteArray(imageBitmap);
         } else {
             Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sadface);
-            image = new BitmapHandler().bitmapToByteArray(bitmap);
+            image = bitmapHandler.bitmapToByteArray(bitmap);
         }
         int spinnerStylePosition = binding.fragmentDetailStyle.getSelectedItemPosition();
         int styleId = -1;
@@ -212,6 +218,9 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean(DIALOG_OPENED, isDialogOpened);
         outState.putLong(EDITING_ID, editingId);
+        if (imageBitmap != null) {
+            outState.putByteArray(IMAGE, bitmapHandler.bitmapToByteArray(imageBitmap));
+        }
     }
 
     /**
@@ -228,22 +237,31 @@ public class ClothesEditDetailFragment extends Fragment {
         if (editingId > -1) {
             item = mViewModel.database.clothingItemDao().getClItemById(editingId);
             binding.fragmentDetailName.setText(item.getName());
-            imageBitmap = new BitmapHandler().byteArrayToBitmap(item.getImage());
+            imageBitmap = bitmapHandler.byteArrayToBitmap(item.getImage());
             binding.fragmentDetailImage.setImageBitmap(imageBitmap);
             binding.fragmentDetailColor.setSelection(item.getColor() + 1, true);
+            binding.fragmentDetailStyle.setSelection(getStyleIndex(), true);
+            Notifications.log("info show: " + mViewModel.database.styleDao().getStyleName(item.getStyle()));
+            Notifications.log("info show: " + item.getColor());
+            Notifications.log("info show: " + new Colors().colorsMap.get(item.getColor()));
             binding.fragmentDetailSize.setText(item.getSize());
             binding.fragmentDetailNote.setText(item.getNote());
+        }
+        if (imageBitmap != null) {
+            binding.fragmentDetailImage.setImageBitmap(imageBitmap);
         }
     }
 
     /**
      * returns the index ox the style in the spinner
+     *
      * @return
      */
     private int getStyleIndex() {
+        Notifications.log("dize styles: " + styles.size());
         String styleName = mViewModel.database.styleDao().getStyleName(item.getStyle());
-        for (int i = 0; i<styles.size(); i++){
-            if(styles.get(i).equals(styleName)){
+        for (int i = 0; i < styles.size(); i++) {
+            if (styles.get(i).equals(styleName)) {
                 Notifications.log(styles.get(i) + " " + styleName);
                 return i;
             }

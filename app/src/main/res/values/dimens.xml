@@ -13,4 +13,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="dp100">100dp</dimen>
+    <dimen name="max_img_detail_width">250dp</dimen>
 </resources>

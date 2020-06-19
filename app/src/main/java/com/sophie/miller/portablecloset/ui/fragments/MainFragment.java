@@ -88,12 +88,13 @@ public class MainFragment extends Fragment {
                 //retrieve color if present
                 filter.setColorFilter(binding.fragmentMainSpinnerColor.getSelectedItemPosition() - 1);
                 //retrieve style if present
-                filter.setStyleFilter(binding.fragmentMainSpinnerStyle.getSelectedItemPosition() - 1);
+                filter.setStyleFilter(getStyleId(binding.fragmentMainSpinnerStyle.getSelectedItemPosition()));
                 //retrieve size if present
                 filter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
                 mViewModel.setFilter(filter);
                 activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
             }
+
         });
         binding.fragmentMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,5 +107,11 @@ public class MainFragment extends Fragment {
         colors.addAll(colorsObject.getAllColors());
         colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
         binding.fragmentMainSpinnerColor.setAdapter(colorsAdapter);
+    }
+
+
+    private int getStyleId(int position) {
+        String style = styles.get(position);
+        return mViewModel.database.styleDao().getStyleId(style);
     }
 }

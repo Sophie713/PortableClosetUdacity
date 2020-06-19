@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -31,6 +32,7 @@ import com.sophie.miller.portablecloset.databinding.FragmentFilteredItemsBinding
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Colors;
+import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
@@ -59,6 +61,7 @@ public class FilteredItemsFragment extends Fragment {
     private ArrayAdapter<String> colorsAdapter;
     private List<String> colors = new ArrayList<>();
     private ClothesFilter currentFilter = new ClothesFilter();
+    int firstStart = 0;
 
     public static FilteredItemsFragment newInstance() {
         return new FilteredItemsFragment();
@@ -66,26 +69,42 @@ public class FilteredItemsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_filtered_items, container, false);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
         //view model
         mViewModel = activity.getViewModel();
+        //obsseve styles to know when my possible styles come
+        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> newStyles) {
+                Notifications.log("styles came");
+                styles.clear();
+                styles.add(getString(R.string.all_styles));
+                styles.addAll(newStyles);
+                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
+                binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
+                //set up color spinner
+                colors.add(getString(R.string.any_color));
+                colors.addAll(colorsObject.getAllColors());
+                colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
+                binding.fragmentItemsSpinnerColor.setAdapter(colorsAdapter);
+            }
+        });
+        //observe filter to know when to filter rec.view
         mViewModel.getFilter().observe(this, new Observer<ClothesFilter>() {
             @Override
             public void onChanged(ClothesFilter clothesFilter) {
+                firstStart++;
+                if (firstStart == 2) {
+                    setupUI(clothesFilter);
+                }
+                Notifications.log("filter came. color: " + clothesFilter.getColorFilter() + " style: " + clothesFilter.getStyleFilter() + " size: " + clothesFilter.getSizeFilter());
                 filteredClothesList.clear();
                 filteredClothesList.addAll(filteringUtil.filterClothes(mViewModel.getDatabase(), clothesFilter));
                 if (filteredClothesList.size() > 0) {
@@ -96,44 +115,24 @@ public class FilteredItemsFragment extends Fragment {
                     binding.fragmentItemsNoItems.setVisibility(View.VISIBLE);
                 }
                 updateRecView();
-                currentFilter = clothesFilter;
-                //todo set filters UI
             }
         });
-        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> newStyles) {
-                styles.clear();
-                styles.add(getString(R.string.all_styles));
-                styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
-                binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
-            }
-        });
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentFilteredItemsBinding.bind(view);
-
         //set up recyclerview
         binding.fragmentItemsRecView.setLayoutManager(new GridLayoutManager(activity, getNumberOfColumns()));
         clothesAdapter = new ClothesAdapter(filteredClothesList, activity);
         binding.fragmentItemsRecView.setAdapter(clothesAdapter);
-        //set up color spinner
-        colors.add(getString(R.string.any_color));
-        colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
-        binding.fragmentItemsSpinnerColor.setAdapter(colorsAdapter);
-        setUpUIFilters();
-        setOnChangeListeners();
-        binding.fragmentItemsFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
-            }
+        //fab -> edit item
+        binding.fragmentItemsFab.setOnClickListener(v -> {
+            activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
         });
+
     }
 
     /**
@@ -149,16 +148,6 @@ public class FilteredItemsFragment extends Fragment {
         });
     }
 
-    /**
-     * sets UI based on filtered data
-     */
-    private void setUpUIFilters() {
-        //set filtered data to the ui
-        binding.fragmentItemsEdittextSize.setText(activity.currentFilter.getSizeFilter());
-        binding.fragmentItemsSpinnerStyle.setSelection(activity.currentFilter.getStyleFilter() + 1, true);
-        binding.fragmentItemsSpinnerColor.setSelection(activity.currentFilter.getColorFilter() + 1, true);
-
-    }
 
     /**
      * set number of columns based on screen size
@@ -193,7 +182,7 @@ public class FilteredItemsFragment extends Fragment {
         binding.fragmentItemsSpinnerColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                currentFilter.setColorFilter(position-1);
+                currentFilter.setColorFilter(position - 1);
                 mViewModel.setFilter(currentFilter);
             }
 
@@ -204,7 +193,10 @@ public class FilteredItemsFragment extends Fragment {
         binding.fragmentItemsSpinnerStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                currentFilter.setStyleFilter(position-1);
+                if (position != 0)
+                    currentFilter.setStyleFilter(mViewModel.database.styleDao().getStyleId(styles.get(position)));
+                else
+                    currentFilter.setStyleFilter(-1);
                 mViewModel.setFilter(currentFilter);
             }
 
@@ -228,4 +220,58 @@ public class FilteredItemsFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * returns the index of the style in the spinner
+     *
+     * @return
+     */
+    private int getStyleIndex(int filterId) {
+        String styleName = mViewModel.database.styleDao().getStyleName(filterId);
+        for (int i = 0; i < styles.size(); i++) {
+            if (styles.get(i).equals(styleName)) {
+                Notifications.log(styles.get(i) + " " + styleName);
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * sets UI based on filtered data
+     */
+    private void setupUI(ClothesFilter clothesFilter) {
+        //size
+        binding.fragmentItemsEdittextSize.setText(clothesFilter.getSizeFilter());
+        //color
+        binding.fragmentItemsSpinnerColor.setSelection(clothesFilter.getColorFilter() + 1, true);
+        //style
+        binding.fragmentItemsSpinnerStyle.setSelection(getStyleIndex(clothesFilter.getStyleFilter()), true);
+        currentFilter.setColorFilter(clothesFilter.getColorFilter());
+        currentFilter.setSizeFilter(clothesFilter.getSizeFilter());
+        currentFilter.setStyleFilter(clothesFilter.getStyleFilter());
+        setOnChangeListeners();
+    }
+    /** todo
+     *
+     *      * set listeners to my filters
+     *      sets UI based on filtered data possible separate
+     *      private void setUpUIFilters() {
+     *         //set filtered data to the ui //todo make work
+     *         binding.fragmentItemsEdittextSize.setText(currentFilter.getSizeFilter());
+     *         Notifications.log("setUpUIFilters " + currentFilter.getSizeFilter());
+     *         binding.fragmentItemsSpinnerStyle.setSelection(currentFilter.getStyleFilter() + 1, true);
+     *         Notifications.log("setUpUIFilters " + currentFilter.getStyleFilter() + 1);
+     *         f (firstStart++ < 3) {
+     *                     currentFilter = clothesFilter;
+     *                     Notifications.log("code got into listofstyle names ");
+     *                     setUpUIFilters();
+     *                     Notifications.log("setUpUIFilters style " + getStyleIndex());
+     *                     setOnChangeListeners();
+     *                     binding.fragmentItemsSpinnerStyle.setSelection(getStyleIndex(), true);
+     *                     Notifications.log("on Attach:  current filter set  " + currentFilter.getSizeFilter() + " " + clothesFilter.getSizeFilter());
+     *
+     *                 }
+     *     }
+     */
 }
