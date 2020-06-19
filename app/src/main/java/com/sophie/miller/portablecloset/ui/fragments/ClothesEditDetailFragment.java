@@ -1,6 +1,5 @@
 package com.sophie.miller.portablecloset.ui.fragments;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -20,18 +17,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.constants.IntentCodes;
-import com.sophie.miller.portablecloset.databinding.DialogEditStylesBinding;
 import com.sophie.miller.portablecloset.databinding.FragmentClothesDetailEditingBinding;
 import com.sophie.miller.portablecloset.dialogs.EditStylesDialog;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
+import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 
@@ -105,8 +101,9 @@ public class ClothesEditDetailFragment extends Fragment {
                 styles.add(getString(R.string.all_styles));
                 styles.addAll(newStyles);
                 styles.add(getString(R.string.edit_styles));
-                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
+                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
                 binding.fragmentDetailStyle.setAdapter(stylesAdapter);
+                binding.fragmentDetailStyle.setSelection(getStyleIndex(), true);
             }
         });
         if (item != null) {
@@ -132,7 +129,7 @@ public class ClothesEditDetailFragment extends Fragment {
         });
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, colors);
+        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
         binding.fragmentDetailColor.setAdapter(colorsAdapter);
         setStylesListener();
         fillUI();
@@ -163,14 +160,25 @@ public class ClothesEditDetailFragment extends Fragment {
             Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.sadface);
             image = new BitmapHandler().bitmapToByteArray(bitmap);
         }
+        int spinnerStylePosition = binding.fragmentDetailStyle.getSelectedItemPosition();
+        int styleId = -1;
+        if (spinnerStylePosition > 0) {
+            styleId = mViewModel.database.styleDao().getStyleId(styles.get(spinnerStylePosition));
+        }
         ClothingItem clothingItem = new ClothingItem(
                 StringHandler.getText(binding.fragmentDetailName),
                 image,
                 (binding.fragmentDetailColor.getSelectedItemPosition() - 1),
-                (binding.fragmentDetailStyle.getSelectedItemPosition() - 1),
+                styleId,
                 StringHandler.getText(binding.fragmentDetailSize),
                 StringHandler.getText(binding.fragmentDetailNote)
         );
+        Notifications.log("info save: " + clothingItem.getStyle());
+        Notifications.log("info save: " + mViewModel.database.styleDao().getStyleName(clothingItem.getStyle()));
+        Notifications.log("info save: " + clothingItem.getColor());
+        Notifications.log("info save: " + new Colors().colorsMap.get(clothingItem.getColor()));
+        if (editingId != -1)
+            clothingItem.setId(editingId);
         editingId = mViewModel.getDatabase().clothingItemDao().insertClItem(clothingItem);
         //todo make AsyncTask post to fulfill requirements
 
@@ -222,11 +230,25 @@ public class ClothesEditDetailFragment extends Fragment {
             binding.fragmentDetailName.setText(item.getName());
             imageBitmap = new BitmapHandler().byteArrayToBitmap(item.getImage());
             binding.fragmentDetailImage.setImageBitmap(imageBitmap);
-            binding.fragmentDetailColor.setSelection(item.getColor(), true);
-            binding.fragmentDetailStyle.setSelection(item.getStyle() + 1, true);
+            binding.fragmentDetailColor.setSelection(item.getColor() + 1, true);
             binding.fragmentDetailSize.setText(item.getSize());
             binding.fragmentDetailNote.setText(item.getNote());
         }
+    }
+
+    /**
+     * returns the index ox the style in the spinner
+     * @return
+     */
+    private int getStyleIndex() {
+        String styleName = mViewModel.database.styleDao().getStyleName(item.getStyle());
+        for (int i = 0; i<styles.size(); i++){
+            if(styles.get(i).equals(styleName)){
+                Notifications.log(styles.get(i) + " " + styleName);
+                return i;
+            }
+        }
+        return 0;
     }
 
 }

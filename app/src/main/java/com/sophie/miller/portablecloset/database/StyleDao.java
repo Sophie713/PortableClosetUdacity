@@ -36,7 +36,7 @@ public interface StyleDao {
     void deleteStyleAt(int id);
 
     @Query("SELECT name FROM styles WHERE id = :id")
-    String getStyle(int id);
+    String getStyleName(int id);
 
     @Query("SELECT id FROM styles WHERE name = :name")
     int getStyleId(String name);

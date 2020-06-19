@@ -21,4 +21,7 @@
     <string name="all_styles">All Styles</string>
     <string name="no_items_found">No Items found.\nTry different selection or add them.</string>
     <string name="confirm_delete">Tap again to confirm.</string>
+    <string name="default_notification_channel_id">1</string>
+    <string name="color">Color</string>
+    <string name="style">Style</string>
 </resources>

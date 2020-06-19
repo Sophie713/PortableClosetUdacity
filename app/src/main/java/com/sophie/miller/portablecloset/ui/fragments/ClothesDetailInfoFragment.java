@@ -7,8 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
 import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
-import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,9 +105,11 @@ public class ClothesDetailInfoFragment extends Fragment {
             binding.fragmentDetailName.setText(item.getName());
             Bitmap image = new BitmapHandler().byteArrayToBitmap(item.getImage());
             binding.fragmentDetailImage.setImageBitmap(image);
-            String style = mViewModel.database.styleDao().getStyle(item.getStyle());
+            String style = mViewModel.database.styleDao().getStyleName(item.getStyle());
+            Notifications.log("info fill UI: "+style);
             binding.fragmentDetailColor.setText(style);
-            String color = new Colors().colorsMap.get(item.getStyle() - 1);
+            String color = new Colors().colorsMap.get(item.getColor());
+            Notifications.log("info fill UI: "+color);
             binding.fragmentDetailStyle.setText(color);
             binding.fragmentDetailSize.setText(item.getSize());
             binding.fragmentDetailNote.setText(item.getNote());

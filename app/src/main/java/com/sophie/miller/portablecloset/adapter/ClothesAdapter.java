@@ -1,15 +1,10 @@
 package com.sophie.miller.portablecloset.adapter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophie.miller.portablecloset.MainActivity;
@@ -17,11 +12,9 @@ import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
-import com.sophie.miller.portablecloset.viewModel.MainViewModel;
-import com.sophie.miller.portablecloset.viewmodels.HolderClItem;
+import com.sophie.miller.portablecloset.viewholders.HolderClItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClothesAdapter extends RecyclerView.Adapter<HolderClItem> {
 

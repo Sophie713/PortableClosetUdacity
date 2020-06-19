@@ -36,21 +36,4 @@ public class BitmapHandler {
     public Bitmap byteArrayToBitmap(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
-    //
-    public void loadImage(Context context) {
-        File imagePath = new File(context.getFilesDir(), PATH);
-        File newFile = new File(imagePath, "default_image.jpg");//todo fix add name
-        // Uri contentUri = getUriForFile(getContext(), "com.mydomain.fileprovider", newFile);
-    }
-
-    public boolean deleteImage(String imagePath) {
-        //get image
-        File imageFile = new File(imagePath);
-
-        // Delete the image
-        return imageFile.delete();
-    }
-    public void saveImage(){
-
-    }
 }

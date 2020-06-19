@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
+import com.sophie.miller.portablecloset.monitoring.Firebase;
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesDetailInfoFragment;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesEditDetailFragment;
@@ -31,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //view model
         MainViewModelFactory factory = new MainViewModelFactory(this.getApplication());
         mViewModel = new ViewModelProvider(this, factory).get(MainViewModel.class);
@@ -43,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             currentFilter = savedInstanceState.getParcelable(CURRENT_FILTER);
         }
+        mViewModel.setFilter(currentFilter);
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     public void setFragment(int fragmentNumber) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, getFragment(fragmentNumber), getFragmentTag(fragmentNumber))

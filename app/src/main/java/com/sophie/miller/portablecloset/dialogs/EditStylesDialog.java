@@ -88,6 +88,7 @@ public class EditStylesDialog extends Dialog implements View.OnClickListener {
         } else {
             viewModel.database.styleDao().insertStyle(new Style(newStyle));
         }
+        binding.editStylesEdittext.setText("");
     }
 }
 

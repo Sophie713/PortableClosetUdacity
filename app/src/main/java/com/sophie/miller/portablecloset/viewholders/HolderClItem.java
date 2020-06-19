@@ -1,4 +1,4 @@
-package com.sophie.miller.portablecloset.viewmodels;
+package com.sophie.miller.portablecloset.viewholders;
 
 import android.view.View;
 import android.widget.ImageView;

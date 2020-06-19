@@ -22,67 +22,66 @@
     <TextView
         android:id="@+id/fragment_main_description_color"
         style="@style/FilterDesctiption"
-        android:layout_width="@dimen/description_width"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_side_margin"
         android:padding="@dimen/default_side_margin"
         android:text="@string/color"
+        app:layout_constraintEnd_toStartOf="@id/fragment_main_description_style"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_main_top_title" />
 
     <TextView
         android:id="@+id/fragment_main_description_style"
         style="@style/FilterDesctiption"
-        android:layout_width="@dimen/description_width"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_side_margin"
         android:padding="@dimen/default_side_margin"
         android:text="@string/style"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_color" />
+        app:layout_constraintEnd_toStartOf="@id/fragment_main_description_size"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_description_color"
+        app:layout_constraintTop_toTopOf="@id/fragment_main_description_color" />
 
     <TextView
         android:id="@+id/fragment_main_description_size"
         style="@style/FilterDesctiption"
-        android:layout_width="@dimen/description_width"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_side_margin"
         android:padding="@dimen/default_side_margin"
         android:text="@string/size"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_style" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_description_style"
+        app:layout_constraintTop_toTopOf="@id/fragment_main_description_color" />
 
     <Spinner
         android:id="@+id/fragment_main_spinner_color"
         style="@style/SpinnerMainFr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/fragment_main_description_color"
-        app:layout_constraintTop_toTopOf="@id/fragment_main_description_color" />
+        app:layout_constraintEnd_toEndOf="@id/fragment_main_description_color"
+        app:layout_constraintStart_toStartOf="@id/fragment_main_description_color"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_color" />
 
     <Spinner
         android:id="@+id/fragment_main_spinner_style"
         style="@style/SpinnerMainFr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_style"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/fragment_main_description_style"
-        app:layout_constraintTop_toTopOf="@id/fragment_main_description_style" />
+        app:layout_constraintEnd_toEndOf="@id/fragment_main_description_style"
+        app:layout_constraintStart_toStartOf="@id/fragment_main_description_style"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_style" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/fragment_main_edittext_size"
         style="@style/SizeEditText"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_side_margin"
         android:hint="@string/size"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/fragment_main_description_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/fragment_main_description_size"
-        app:layout_constraintTop_toTopOf="@id/fragment_main_description_size" />
+        android:imeOptions="actionDone"
+        app:layout_constraintEnd_toEndOf="@id/fragment_main_description_size"
+        app:layout_constraintStart_toStartOf="@id/fragment_main_description_size"
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_size" />
 
     <Button
         android:id="@+id/fragment_main_filter_btn"
@@ -93,7 +92,7 @@
         android:text="Filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_main_description_size" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_main_edittext_size" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_main_fab"

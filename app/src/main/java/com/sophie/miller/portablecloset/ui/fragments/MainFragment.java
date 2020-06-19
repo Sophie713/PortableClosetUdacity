@@ -76,7 +76,7 @@ public class MainFragment extends Fragment {
                 styles.clear();
                 styles.add(getString(R.string.all_styles));
                 styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
+                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
                 binding.fragmentMainSpinnerStyle.setAdapter(stylesAdapter);
             }
         });
@@ -91,7 +91,7 @@ public class MainFragment extends Fragment {
                 filter.setStyleFilter(binding.fragmentMainSpinnerStyle.getSelectedItemPosition() - 1);
                 //retrieve size if present
                 filter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
-                activity.setCurrentFilter(filter);
+                mViewModel.setFilter(filter);
                 activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
             }
         });
@@ -104,7 +104,7 @@ public class MainFragment extends Fragment {
 
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, colors);
+        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
         binding.fragmentMainSpinnerColor.setAdapter(colorsAdapter);
     }
 }

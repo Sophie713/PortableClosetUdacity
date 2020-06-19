@@ -1,6 +1,8 @@
 package com.sophie.miller.portablecloset.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import com.sophie.miller.portablecloset.MainActivity;
 import com.sophie.miller.portablecloset.R;
 import com.sophie.miller.portablecloset.adapter.ClothesAdapter;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
+import com.sophie.miller.portablecloset.database.GetFilteredList;
 import com.sophie.miller.portablecloset.databinding.FragmentFilteredItemsBinding;
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
@@ -47,7 +50,7 @@ public class FilteredItemsFragment extends Fragment {
     //filtered clothes
     private ArrayList<ClothingItem> filteredClothesList = new ArrayList<>();
     private ClothesAdapter clothesAdapter;
-    private ClothesFilter currentFilter;
+    private GetFilteredList filteringUtil = new GetFilteredList();
     //styles spinner
     private ArrayAdapter<String> stylesAdapter;
     private List<String> styles = new ArrayList<>();
@@ -55,6 +58,7 @@ public class FilteredItemsFragment extends Fragment {
     private Colors colorsObject = new Colors();
     private ArrayAdapter<String> colorsAdapter;
     private List<String> colors = new ArrayList<>();
+    private ClothesFilter currentFilter = new ClothesFilter();
 
     public static FilteredItemsFragment newInstance() {
         return new FilteredItemsFragment();
@@ -72,19 +76,19 @@ public class FilteredItemsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
         //view model
         mViewModel = activity.getViewModel();
-        mViewModel.listOfClothes().observe(this, new Observer<List<ClothingItem>>() {
+        mViewModel.getFilter().observe(this, new Observer<ClothesFilter>() {
             @Override
-            public void onChanged(List<ClothingItem> clothingItems) {
+            public void onChanged(ClothesFilter clothesFilter) {
                 filteredClothesList.clear();
-                if (clothingItems.size() > 0) {
-                    //todo loading screen
-                    filteredClothesList.addAll(clothingItems);
+                filteredClothesList.addAll(filteringUtil.filterClothes(mViewModel.getDatabase(), clothesFilter));
+                if (filteredClothesList.size() > 0) {
                     binding.fragmentItemsRecView.setVisibility(View.VISIBLE);
                     binding.fragmentItemsNoItems.setVisibility(View.GONE);
                 } else {
@@ -92,6 +96,8 @@ public class FilteredItemsFragment extends Fragment {
                     binding.fragmentItemsNoItems.setVisibility(View.VISIBLE);
                 }
                 updateRecView();
+                currentFilter = clothesFilter;
+                //todo set filters UI
             }
         });
         mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
@@ -100,12 +106,10 @@ public class FilteredItemsFragment extends Fragment {
                 styles.clear();
                 styles.add(getString(R.string.all_styles));
                 styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, styles);
+                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
                 binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
             }
         });
-        this.currentFilter = activity.getCurrentFilter();
-        filterData();
     }
 
     @Override
@@ -120,7 +124,7 @@ public class FilteredItemsFragment extends Fragment {
         //set up color spinner
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, colors);
+        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
         binding.fragmentItemsSpinnerColor.setAdapter(colorsAdapter);
         setUpUIFilters();
         setOnChangeListeners();
@@ -156,10 +160,6 @@ public class FilteredItemsFragment extends Fragment {
 
     }
 
-    private void filterData() {
-        mViewModel.setFilter(currentFilter);
-    }
-
     /**
      * set number of columns based on screen size
      *
@@ -193,8 +193,8 @@ public class FilteredItemsFragment extends Fragment {
         binding.fragmentItemsSpinnerColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                currentFilter.setColorFilter(position - 1);
-                filterData();
+                currentFilter.setColorFilter(position-1);
+                mViewModel.setFilter(currentFilter);
             }
 
             @Override
@@ -204,8 +204,8 @@ public class FilteredItemsFragment extends Fragment {
         binding.fragmentItemsSpinnerStyle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                currentFilter.setStyleFilter(position - 1);
-                filterData();
+                currentFilter.setStyleFilter(position-1);
+                mViewModel.setFilter(currentFilter);
             }
 
             @Override
@@ -220,7 +220,7 @@ public class FilteredItemsFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentFilter.setSizeFilter(s.toString());
-                filterData();
+                mViewModel.setFilter(currentFilter);
             }
 
             @Override
@@ -228,11 +228,4 @@ public class FilteredItemsFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        activity.setCurrentFilter(currentFilter);
-    }
-
 }

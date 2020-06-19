@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="Item Name"
             android:hint="@string/item_name"
+            android:imeOptions="actionDone"
             android:inputType="text"
             tools:text="@string/item_name" />
 
@@ -49,6 +50,7 @@
             android:layout_height="wrap_content"
             android:autofillHints="Item Name"
             android:hint="@string/item_size"
+            android:imeOptions="actionDone"
             android:inputType="text"
             tools:text="@string/item_size" />
 
@@ -81,6 +83,7 @@
         android:layout_margin="@dimen/default_side_margin"
         android:autofillHints="Personal Note"
         android:hint="@string/personal_note"
+        android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:maxLength="500"
         android:paddingTop="@dimen/default_side_margin"

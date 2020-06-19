@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey;
 public class ClothingItem implements Parcelable {
     //primary key
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     private String name = "";
     private String picture_address = "";
     private byte[] image;
@@ -21,7 +21,7 @@ public class ClothingItem implements Parcelable {
     private String note = "";
 
 
-    public ClothingItem(int id, String name, byte[] image, int color, int style, String size, String note) {
+    public ClothingItem(long id, String name, byte[] image, int color, int style, String size, String note) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -66,11 +66,11 @@ public class ClothingItem implements Parcelable {
         }
     };
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -137,7 +137,7 @@ public class ClothingItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(picture_address);
         dest.writeByteArray(image);

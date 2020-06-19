@@ -10,40 +10,13 @@
     <TextView
         android:id="@+id/fragment_items_description_color"
         style="@style/FilterDesctiption"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
+        android:minWidth="@dimen/dp100"
         android:padding="@dimen/default_side_margin"
         android:text="@string/color"
-        app:layout_constraintEnd_toStartOf="@id/fragment_items_description_style"
-        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/fragment_items_description_style"
-        style="@style/FilterDesctiption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_side_margin"
-        android:padding="@dimen/default_side_margin"
-        android:text="@string/style"
-        app:layout_constraintEnd_toStartOf="@id/fragment_items_description_size"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@id/fragment_items_description_color"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/fragment_items_description_size"
-        style="@style/FilterDesctiption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_side_margin"
-        android:padding="@dimen/default_side_margin"
-        android:text="@string/size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@id/fragment_items_description_style"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
@@ -54,6 +27,18 @@
         app:layout_constraintStart_toStartOf="@id/fragment_items_description_color"
         app:layout_constraintTop_toBottomOf="@id/fragment_items_description_color" />
 
+    <TextView
+        android:id="@+id/fragment_items_description_style"
+        style="@style/FilterDesctiption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:minWidth="@dimen/dp100"
+        android:padding="@dimen/default_side_margin"
+        android:text="@string/style"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_items_spinner_color" />
+
     <Spinner
         android:id="@+id/fragment_items_spinner_style"
         android:layout_width="0dp"
@@ -62,43 +47,57 @@
         app:layout_constraintStart_toStartOf="@id/fragment_items_description_style"
         app:layout_constraintTop_toBottomOf="@id/fragment_items_description_style" />
 
+    <TextView
+        android:id="@+id/fragment_items_description_size"
+        style="@style/FilterDesctiption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_side_margin"
+        android:minWidth="@dimen/dp100"
+        android:padding="@dimen/default_side_margin"
+        android:text="@string/size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_items_spinner_style" />
+
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/fragment_items_edittext_size"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/size"
+        android:imeOptions="actionDone"
         app:layout_constraintEnd_toEndOf="@id/fragment_items_description_size"
         app:layout_constraintStart_toStartOf="@id/fragment_items_description_size"
         app:layout_constraintTop_toBottomOf="@id/fragment_items_description_size" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/labelBarrier"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="fragment_items_spinner_style,fragment_items_edittext_size" />
+        android:layout_width="@dimen/dp8"
+        android:layout_height="match_parent"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="fragment_items_description_color,fragment_items_edittext_size" />
 
     <TextView
         android:id="@+id/fragment_items_no_items"
         style="@style/TopTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="@dimen/default_side_margin"
         android:text="@string/no_items_found"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/labelBarrier" />
+        app:layout_constraintStart_toEndOf="@id/labelBarrier"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_items_rec_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="@dimen/default_side_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/labelBarrier"
+        app:layout_constraintStart_toEndOf="@id/labelBarrier"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_card" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

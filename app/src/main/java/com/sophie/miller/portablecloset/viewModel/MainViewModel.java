@@ -21,10 +21,10 @@ public class MainViewModel extends AndroidViewModel {
     //database
     public ClothesDatabase database;
     //current clothes filter to get data from
-    private ClothesFilter clothesFilter = new ClothesFilter();
+    //private ClothesFilter clothesFilter = new ClothesFilter();
     //filtered clothes
-    private MutableLiveData<ClothesFilter> filter = new MutableLiveData<>();
-    private LiveData<List<ClothingItem>> filteredClothes;
+    private MutableLiveData<ClothesFilter> filter = new MutableLiveData<>(new ClothesFilter());
+    //private LiveData<List<ClothingItem>> filteredClothes;
     //styles lists
     private LiveData<List<String>> styleNames;
 
@@ -33,13 +33,13 @@ public class MainViewModel extends AndroidViewModel {
         database = ClothesDatabase.getInstance(this.getApplication());
         styleNames = database.styleDao().loadStyleNames();
         //set default filter value
-        //filter.postValue(clothesFilter);
-        filteredClothes = Transformations.switchMap(filter, f -> filterClothes());
+       // filteredClothes = Transformations.switchMap(filter, f -> filterClothes());
     }
+
 
     /**
      * takes filters as parameters and returns the filtered data
-     */
+
     private LiveData<List<ClothingItem>> filterClothes() {
         filteredClothes = null;
         String size = clothesFilter.getSizeFilter();
@@ -67,13 +67,21 @@ public class MainViewModel extends AndroidViewModel {
         } else {
             return database.clothingItemDao().loadAllClothes();
         }
-    }
+    }*/
 
     /**
      * @return list of my clothes
      */
-    public LiveData<List<ClothingItem>> listOfClothes() {
-        return filteredClothes;
+    public LiveData<ClothesFilter> getFilter() {
+        return filter;
+    }
+
+    /**
+     * setFilter
+     * @param filter
+     */
+    public void setFilter(ClothesFilter filter) {
+        this.filter.postValue(filter);
     }
 
     /**
@@ -95,9 +103,9 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * set filter
-     */
+
     public void setFilter(ClothesFilter filter) {
         this.clothesFilter = filter;
         this.filter.postValue(clothesFilter);
-    }
+    }     */
 }
