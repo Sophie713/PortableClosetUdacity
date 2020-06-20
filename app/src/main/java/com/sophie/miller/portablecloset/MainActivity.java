@@ -1,27 +1,24 @@
 package com.sophie.miller.portablecloset;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sophie.miller.portablecloset.constants.FragmentCodes;
-import com.sophie.miller.portablecloset.monitoring.Firebase;
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesDetailInfoFragment;
 import com.sophie.miller.portablecloset.ui.fragments.ClothesEditDetailFragment;
 import com.sophie.miller.portablecloset.ui.fragments.FilteredItemsFragment;
 import com.sophie.miller.portablecloset.ui.fragments.MainFragment;
-import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
@@ -30,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     //saved state keys
     private static final String CURRENT_FILTER = "CURRENT_FILTER";
     //variables to pass between fragments
-    public ClothesFilter currentFilter = new ClothesFilter();
     private long detailId = -1;
     //view model
     MainViewModel mViewModel;
@@ -47,10 +43,7 @@ public class MainActivity extends AppCompatActivity {
             setFragment(getIntent().getIntExtra(FragmentCodes.OPEN_FRAGMENT, 0));
         } else if (savedInstanceState == null) {
             setFragment(0);
-        } else {
-            currentFilter = savedInstanceState.getParcelable(CURRENT_FILTER);
         }
-        mViewModel.setFilter(currentFilter);
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -63,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * returns required fragment
      *
-     * @param fragmentNumber
-     * @return
+     * @param fragmentNumber number of sragment
+     * @return Fragment instance
      */
     private Fragment getFragment(int fragmentNumber) {
         switch (fragmentNumber) {
@@ -86,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * returns fragment ID as a String
      *
-     * @param fragmentNumber
-     * @return
+     * @param fragmentNumber fragment int id
+     * @return id as string
      */
     private String getFragmentTag(int fragmentNumber) {
         switch (fragmentNumber) {
@@ -109,26 +102,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         setFragment(FragmentCodes.MAIN_FRAGMENT);
         detailId = -1;
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(CURRENT_FILTER, currentFilter);
-    }
-
-    /**
-     * set current filter
-     */
-    public void setCurrentFilter(ClothesFilter filter) {
-        this.currentFilter = filter;
-    }
-
-    /**
-     * get current filter
-     */
-    public ClothesFilter getCurrentFilter() {
-        return currentFilter;
     }
 
     /**
@@ -167,7 +140,16 @@ public class MainActivity extends AppCompatActivity {
         if (view == null) {
             view = new View(this);
         }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    /**
+     * set toolbar
+     */
+    public void setToolbarTitle(String title){
+        setTitle(title);
     }
 }
 

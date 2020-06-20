@@ -1,9 +1,8 @@
 package com.sophie.miller.portablecloset.ui.fragments;
 
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -24,7 +23,6 @@ import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
-import com.sophie.miller.portablecloset.viewModel.MainViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +62,7 @@ public class MainFragment extends Fragment {
         activity = (MainActivity) getActivity();
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -71,42 +70,30 @@ public class MainFragment extends Fragment {
         binding.main.setOnClickListener(v-> activity.hideKeyboard());
         //view model//view model
         mViewModel = activity.getViewModel();
-        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> newStyles) {
-                styles.clear();
-                styles.add(getString(R.string.all_styles));
-                styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
-                binding.fragmentMainSpinnerStyle.setAdapter(stylesAdapter);
-            }
+        mViewModel.listOfStyleNames().observe(this, newStyles -> {
+            styles.clear();
+            styles.add(getString(R.string.all_styles));
+            styles.addAll(newStyles);
+            stylesAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, styles);
+            binding.fragmentMainSpinnerStyle.setAdapter(stylesAdapter);
         });
 
-        binding.fragmentMainFilterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClothesFilter filter = new ClothesFilter();
-                //retrieve color if present
-                filter.setColorFilter(binding.fragmentMainSpinnerColor.getSelectedItemPosition() - 1);
-                //retrieve style if present
-                filter.setStyleFilter(getStyleId(binding.fragmentMainSpinnerStyle.getSelectedItemPosition()));
-                //retrieve size if present
-                filter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
-                mViewModel.setFilter(filter);
-                activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
-            }
-
+        binding.fragmentMainFilterBtn.setOnClickListener(v -> {
+            ClothesFilter filter = new ClothesFilter();
+            //retrieve color if present
+            filter.setColorFilter(binding.fragmentMainSpinnerColor.getSelectedItemPosition() - 1);
+            //retrieve style if present
+            filter.setStyleFilter(getStyleId(binding.fragmentMainSpinnerStyle.getSelectedItemPosition()));
+            //retrieve size if present
+            filter.setSizeFilter(StringHandler.getText(binding.fragmentMainEdittextSize));
+            mViewModel.setFilter(filter);
+            activity.setFragment(FragmentCodes.FILTERED_LIST_FRAGMENT);
         });
-        binding.fragmentMainFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
-            }
-        });
+        binding.fragmentMainFab.setOnClickListener(v -> activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT));
 
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
+        colorsAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, colors);
         binding.fragmentMainSpinnerColor.setAdapter(colorsAdapter);
     }
 

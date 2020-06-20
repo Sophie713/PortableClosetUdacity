@@ -11,6 +11,6 @@ public class Notifications {
     }
 
     public static void log(String logMessage){
-        Log.e("xyz", logMessage);
+        Log.d("xyz", logMessage);
     }
 }

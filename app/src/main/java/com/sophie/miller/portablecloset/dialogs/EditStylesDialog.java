@@ -3,7 +3,6 @@ package com.sophie.miller.portablecloset.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -30,6 +29,7 @@ import com.sophie.miller.portablecloset.viewModel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * open in try catch to avoid crashes
@@ -57,7 +57,7 @@ public class EditStylesDialog extends Dialog implements View.OnClickListener {
         binding = DialogEditStylesBinding.inflate(LayoutInflater.from(context));
         setContentView(binding.getRoot());
         //adjust on keyboard
-        getWindow().setFlags(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Objects.requireNonNull(getWindow()).setFlags(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         binding.editStylesRecView.setLayoutManager(new LinearLayoutManager(context));
         stylesDialogAdapter = new StylesDialogAdapter(viewModel, fragment, context);
@@ -101,15 +101,12 @@ class StylesDialogAdapter extends RecyclerView.Adapter<StylesDialogAdapter.Style
 
     StylesDialogAdapter(MainViewModel viewModel, Fragment fragment, Context context) {
         this.viewModel = viewModel;
-        viewModel.listOfStyleNames().observe(fragment, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> strings) {
-                stylesList.clear();
-                if (strings.size() > 0) {
-                    stylesList.addAll(strings);
-                }
-                notifyDataSetChanged();
+        viewModel.listOfStyleNames().observe(fragment, strings -> {
+            stylesList.clear();
+            if (strings.size() > 0) {
+                stylesList.addAll(strings);
             }
+            notifyDataSetChanged();
         });
         this.context = context;
     }
@@ -124,29 +121,23 @@ class StylesDialogAdapter extends RecyclerView.Adapter<StylesDialogAdapter.Style
     @Override
     public void onBindViewHolder(@NonNull StyleHolder holder, int position) {
         holder.binding.itemStyleText.setText(stylesList.get(position));
-        holder.binding.itemStyleDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (lastDelete == viewModel.database.styleDao().getStyleId(stylesList.get(position))) {
-                    int index = lastDelete;
-                    viewModel.database.styleDao().deleteStyleAt(index);
-                    viewModel.database.clothingItemDao().updateStyle(index);
-                } else {
-                    Notifications.makeToast(context,  context.getString(R.string.confirm_delete));
-                    lastDelete = viewModel.database.styleDao().getStyleId(stylesList.get(position));
-                    (new Handler()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            lastDelete = -1;
-                        }
-                    }, 2000);
-                }
+        holder.binding.itemStyleDelete.setOnClickListener(v -> {
+            if (lastDelete == viewModel.database.styleDao().getStyleId(stylesList.get(position))) {
+                int index = lastDelete;
+                viewModel.database.styleDao().deleteStyleAt(index);
+                viewModel.database.clothingItemDao().updateStyle(index);
+            } else {
+                Notifications.makeToast(context,  context.getString(R.string.confirm_delete));
+                lastDelete = viewModel.database.styleDao().getStyleId(stylesList.get(position));
+                (new Handler()).postDelayed(() -> lastDelete = -1, 2000);
             }
         });
         holder.binding.itemStyleLayout.setOnClickListener(view -> {
             //hide keyboard on click outside
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         });
     }
 

@@ -24,5 +24,13 @@
     <string name="default_notification_channel_id">1</string>
     <string name="color">Color</string>
     <string name="style">Style</string>
-    <string name="some_login_error">There has been some error, please try again.</string>
+    <string name="some_error">There has been some error, please try again.</string>
+    <string name="close_dialog">Close dialog</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="welcome">Welcome to\nPortable Closet</string>
+    <string name="filter">Filter</string>
+    <string name="name_plaseholder">Name of the Item</string>
+    <string name="add_a_new_clothing_item">Add a new clothing item</string>
+    <string name="set_filter">Set a filter</string>
 </resources>

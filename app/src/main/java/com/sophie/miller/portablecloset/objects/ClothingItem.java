@@ -13,7 +13,7 @@ public class ClothingItem implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name = "";
-    private String picture_address = "";
+    private String picture_address = ""; //add in future??
     private byte[] image;
     private int color = -1;
     private int style = -1;

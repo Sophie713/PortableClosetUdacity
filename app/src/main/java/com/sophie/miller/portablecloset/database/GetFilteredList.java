@@ -1,12 +1,9 @@
 package com.sophie.miller.portablecloset.database;
 
-import androidx.lifecycle.LiveData;
-
 import com.sophie.miller.portablecloset.objects.ClothesFilter;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GetFilteredList {
     /**

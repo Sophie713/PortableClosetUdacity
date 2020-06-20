@@ -1,6 +1,8 @@
-package com.sophie.miller.portablecloset.utils;
+package com.sophie.miller.portablecloset.monitoring;
 
 import android.os.AsyncTask;
+
+import com.sophie.miller.portablecloset.utils.Notifications;
 
 import java.net.HttpURLConnection;
 import java.net.URL;

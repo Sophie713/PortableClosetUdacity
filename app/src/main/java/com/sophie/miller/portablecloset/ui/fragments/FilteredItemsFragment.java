@@ -43,12 +43,11 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  * Use the {@link FilteredItemsFragment#newInstance} factory method to
  * create an instance of this fragment.
- * todo hide keyboard on outside click
  */
 public class FilteredItemsFragment extends Fragment {
     private MainViewModel mViewModel;
     private MainActivity activity;
-    FragmentFilteredItemsBinding binding;
+    private FragmentFilteredItemsBinding binding;
     //filtered clothes
     private ArrayList<ClothingItem> filteredClothesList = new ArrayList<>();
     private ClothesAdapter clothesAdapter;
@@ -61,7 +60,18 @@ public class FilteredItemsFragment extends Fragment {
     private ArrayAdapter<String> colorsAdapter;
     private List<String> colors = new ArrayList<>();
     private ClothesFilter currentFilter = new ClothesFilter();
-    int firstStart = 0;
+    //first initialization of view fragment
+    private int firstStart = 0;
+    private static final String FIRST_START = "FIRST_START";
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(FIRST_START)) {
+            firstStart++;
+        }
+    }
 
     public static FilteredItemsFragment newInstance() {
         return new FilteredItemsFragment();
@@ -77,45 +87,39 @@ public class FilteredItemsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
+        activity.setToolbarTitle(getString(R.string.set_filter));
         //view model
         mViewModel = activity.getViewModel();
         //obsseve styles to know when my possible styles come
-        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> newStyles) {
-                Notifications.log("styles came");
-                styles.clear();
-                styles.add(getString(R.string.all_styles));
-                styles.addAll(newStyles);
-                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
-                binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
-                //set up color spinner
-                colors.add(getString(R.string.any_color));
-                colors.addAll(colorsObject.getAllColors());
-                colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
-                binding.fragmentItemsSpinnerColor.setAdapter(colorsAdapter);
-            }
+        mViewModel.listOfStyleNames().observe(this, newStyles -> {
+            Notifications.log("styles came");
+            styles.clear();
+            styles.add(getString(R.string.all_styles));
+            styles.addAll(newStyles);
+            stylesAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, styles);
+            binding.fragmentItemsSpinnerStyle.setAdapter(stylesAdapter);
+            //set up color spinner
+            colors.add(getString(R.string.any_color));
+            colors.addAll(colorsObject.getAllColors());
+            colorsAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, colors);
+            binding.fragmentItemsSpinnerColor.setAdapter(colorsAdapter);
         });
         //observe filter to know when to filter rec.view
-        mViewModel.getFilter().observe(this, new Observer<ClothesFilter>() {
-            @Override
-            public void onChanged(ClothesFilter clothesFilter) {
-                firstStart++;
-                if (firstStart == 2) {
-                    setupUI(clothesFilter);
-                }
-                Notifications.log("filter came. color: " + clothesFilter.getColorFilter() + " style: " + clothesFilter.getStyleFilter() + " size: " + clothesFilter.getSizeFilter());
-                filteredClothesList.clear();
-                filteredClothesList.addAll(filteringUtil.filterClothes(mViewModel.getDatabase(), clothesFilter));
-                if (filteredClothesList.size() > 0) {
-                    binding.fragmentItemsRecView.setVisibility(View.VISIBLE);
-                    binding.fragmentItemsNoItems.setVisibility(View.GONE);
-                } else {
-                    binding.fragmentItemsRecView.setVisibility(View.GONE);
-                    binding.fragmentItemsNoItems.setVisibility(View.VISIBLE);
-                }
-                updateRecView();
+        mViewModel.getFilter().observe(this, clothesFilter -> {
+            firstStart++;
+            if (firstStart == 2) {
+                setupUI(clothesFilter);
             }
+            filteredClothesList.clear();
+            filteredClothesList.addAll(filteringUtil.filterClothes(mViewModel.getDatabase(), clothesFilter));
+            if (filteredClothesList.size() > 0) {
+                binding.fragmentItemsRecView.setVisibility(View.VISIBLE);
+                binding.fragmentItemsNoItems.setVisibility(View.GONE);
+            } else {
+                binding.fragmentItemsRecView.setVisibility(View.GONE);
+                binding.fragmentItemsNoItems.setVisibility(View.VISIBLE);
+            }
+            updateRecView();
         });
 
     }
@@ -129,10 +133,8 @@ public class FilteredItemsFragment extends Fragment {
         clothesAdapter = new ClothesAdapter(filteredClothesList, activity);
         binding.fragmentItemsRecView.setAdapter(clothesAdapter);
         //fab -> edit item
-        binding.fragmentItemsFab.setOnClickListener(v -> {
-            activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT);
-        });
-        binding.fragmentItemsMainLayout.setOnClickListener(v->activity.hideKeyboard());
+        binding.fragmentItemsFab.setOnClickListener(v -> activity.setFragment(FragmentCodes.DETAIL_EDIT_FRAGMENT));
+        binding.fragmentItemsMainLayout.setOnClickListener(v -> activity.hideKeyboard());
     }
 
     /**
@@ -140,12 +142,7 @@ public class FilteredItemsFragment extends Fragment {
      */
     private void updateRecView() {
         clothesAdapter.insertNewData(filteredClothesList);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                clothesAdapter.notifyDataSetChanged();
-            }
-        });
+        activity.runOnUiThread(() -> clothesAdapter.notifyDataSetChanged());
     }
 
 
@@ -224,7 +221,7 @@ public class FilteredItemsFragment extends Fragment {
     /**
      * returns the index of the style in the spinner
      *
-     * @return
+     * @return index of style in the spinner
      */
     private int getStyleIndex(int filterId) {
         String styleName = mViewModel.database.styleDao().getStyleName(filterId);
@@ -252,26 +249,16 @@ public class FilteredItemsFragment extends Fragment {
         currentFilter.setStyleFilter(clothesFilter.getStyleFilter());
         setOnChangeListeners();
     }
-    /** todo
-     *
-     *      * set listeners to my filters
-     *      sets UI based on filtered data possible separate
-     *      private void setUpUIFilters() {
-     *         //set filtered data to the ui //todo make work
-     *         binding.fragmentItemsEdittextSize.setText(currentFilter.getSizeFilter());
-     *         Notifications.log("setUpUIFilters " + currentFilter.getSizeFilter());
-     *         binding.fragmentItemsSpinnerStyle.setSelection(currentFilter.getStyleFilter() + 1, true);
-     *         Notifications.log("setUpUIFilters " + currentFilter.getStyleFilter() + 1);
-     *         f (firstStart++ < 3) {
-     *                     currentFilter = clothesFilter;
-     *                     Notifications.log("code got into listofstyle names ");
-     *                     setUpUIFilters();
-     *                     Notifications.log("setUpUIFilters style " + getStyleIndex());
-     *                     setOnChangeListeners();
-     *                     binding.fragmentItemsSpinnerStyle.setSelection(getStyleIndex(), true);
-     *                     Notifications.log("on Attach:  current filter set  " + currentFilter.getSizeFilter() + " " + clothesFilter.getSizeFilter());
-     *
-     *                 }
-     *     }
-     */
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        activity.setToolbarTitle(getString(R.string.app_name));
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(FIRST_START, FIRST_START);
+    }
 }

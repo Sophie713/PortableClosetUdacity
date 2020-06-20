@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,7 @@ import com.sophie.miller.portablecloset.dialogs.EditStylesDialog;
 import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Colors;
 import com.sophie.miller.portablecloset.utils.BitmapHandler;
-import com.sophie.miller.portablecloset.utils.ExampleAsyncTask;
+import com.sophie.miller.portablecloset.monitoring.ExampleAsyncTask;
 import com.sophie.miller.portablecloset.utils.Notifications;
 import com.sophie.miller.portablecloset.utils.StringHandler;
 import com.sophie.miller.portablecloset.viewModel.MainViewModel;
@@ -102,18 +101,15 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
         mViewModel = activity.getViewModel();
-        mViewModel.listOfStyleNames().observe(this, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> newStyles) {
-                styles.clear();
-                styles.add(getString(R.string.all_styles));
-                styles.addAll(newStyles);
-                styles.add(getString(R.string.edit_styles));
-                stylesAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, styles);
-                binding.fragmentDetailStyle.setAdapter(stylesAdapter);
-                if (item != null) {
-                    binding.fragmentDetailStyle.setSelection(getStyleIndex());
-                }
+        mViewModel.listOfStyleNames().observe(this, newStyles -> {
+            styles.clear();
+            styles.add(getString(R.string.all_styles));
+            styles.addAll(newStyles);
+            styles.add(getString(R.string.edit_styles));
+            stylesAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, styles);
+            binding.fragmentDetailStyle.setAdapter(stylesAdapter);
+            if (item != null) {
+                binding.fragmentDetailStyle.setSelection(getStyleIndex());
             }
         });
 
@@ -124,7 +120,7 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding = FragmentClothesDetailEditingBinding.bind(view);
         //set on clicks
-        binding.fragmentDetailMainLayout.setOnClickListener(v-> activity.hideKeyboard());
+        binding.fragmentDetailMainLayout.setOnClickListener(v -> activity.hideKeyboard());
         binding.fragmentDetailImage.setOnClickListener(v -> {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
@@ -138,7 +134,7 @@ public class ClothesEditDetailFragment extends Fragment {
         });
         colors.add(getString(R.string.any_color));
         colors.addAll(colorsObject.getAllColors());
-        colorsAdapter = new ArrayAdapter<String>(activity, R.layout.item_spinner, colors);
+        colorsAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner, colors);
         binding.fragmentDetailColor.setAdapter(colorsAdapter);
         setStylesListener();
         fillUI();
@@ -149,11 +145,15 @@ public class ClothesEditDetailFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IntentCodes.REQUEST_IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK) {
-                Bundle extras = data.getExtras();
-                imageBitmap = (Bitmap) extras.get("data");
-                binding.fragmentDetailImage.setImageBitmap(imageBitmap);
+                try {
+                    Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");
+                    binding.fragmentDetailImage.setImageBitmap(imageBitmap);
+                } catch (Exception e) {
+                    Notifications.makeToast(activity, getString(R.string.some_error));
+                }
             } else {
-                //todo notify about error
+                Notifications.makeToast(activity, getString(R.string.some_error));
             }
         }
     }
@@ -260,7 +260,7 @@ public class ClothesEditDetailFragment extends Fragment {
     /**
      * returns the index ox the style in the spinner
      *
-     * @return
+     * @return styles index in the spinner
      */
     private int getStyleIndex() {
         String styleName = mViewModel.database.styleDao().getStyleName(item.getStyle());

@@ -16,12 +16,13 @@
         android:layout_height="@dimen/icon_size"
         android:layout_gravity="end"
         android:layout_margin="@dimen/dp8"
+        android:contentDescription="@string/close_dialog"
         android:src="@android:drawable/ic_delete" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/edit_styles_rec_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_side_margin"
         android:layout_weight="1"
         tools:listitem="@layout/item_style" />
@@ -37,6 +38,7 @@
         android:id="@+id/edit_styles_add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/add"
         android:text="@string/add" />
 </LinearLayout>
 

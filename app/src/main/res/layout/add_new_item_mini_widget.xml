@@ -8,7 +8,9 @@
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
         android:background="@drawable/bckg_circle"
+        android:tint="@android:color/white"
         android:padding="@dimen/dp4"
+        android:contentDescription="@string/add_a_new_clothing_item"
         android:src="@drawable/ic_plus" />
 
 </LinearLayout>

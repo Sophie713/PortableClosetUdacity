@@ -51,7 +51,8 @@ public class ClothesAdapter extends RecyclerView.Adapter<HolderClItem> {
 
     @Override
     public int getItemCount() {
-        return filteredClothes.size();
+        if (filteredClothes != null) return filteredClothes.size();
+        else return 0;
     }
 
     public void insertNewData(ArrayList<ClothingItem> filteredClothes) {

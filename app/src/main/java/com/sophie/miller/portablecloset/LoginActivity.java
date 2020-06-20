@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 Notifications.log("" + user.getDisplayName());
                 startActivity(new Intent(this, MainActivity.class));
             } else {
-               Notifications.makeToast(this, getString(R.string.some_login_error));
+               Notifications.makeToast(this, getString(R.string.some_error));
             }
         }
     }

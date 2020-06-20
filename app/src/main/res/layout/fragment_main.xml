@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
         android:paddingTop="@dimen/default_side_margin"
-        android:text="Welcome to\nPortable Closet"
+        android:text="@string/welcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +25,8 @@
         android:layout_width="@dimen/description_width"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
-        android:padding="@dimen/default_side_margin"
+        android:paddingTop="@dimen/default_side_margin"
+        android:paddingBottom="@dimen/dp8"
         android:text="@string/color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_main_top_title" />
@@ -36,7 +37,8 @@
         android:layout_width="@dimen/description_width"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
-        android:padding="@dimen/default_side_margin"
+        android:paddingTop="@dimen/dp8"
+        android:paddingBottom="@dimen/dp8"
         android:text="@string/style"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_main_description_color" />
@@ -47,7 +49,8 @@
         android:layout_width="@dimen/description_width"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_side_margin"
-        android:padding="@dimen/default_side_margin"
+        android:paddingTop="@dimen/dp8"
+        android:paddingBottom="@dimen/dp8"
         android:text="@string/size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_main_description_style" />
@@ -90,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_side_margin"
-        android:text="Filter"
+        android:text="@string/filter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_main_description_size" />
@@ -100,6 +103,7 @@
         style="?floatingActionButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/add"
         android:layout_margin="@dimen/default_side_margin"
         android:src="@drawable/ic_plus"
         app:layout_constraintBottom_toBottomOf="parent"

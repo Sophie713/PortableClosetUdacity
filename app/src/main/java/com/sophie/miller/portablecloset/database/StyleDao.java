@@ -8,7 +8,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.sophie.miller.portablecloset.objects.ClothingItem;
 import com.sophie.miller.portablecloset.objects.Style;
 
 import java.util.List;

@@ -1,5 +1,5 @@
 icons - credits:
-Icons by svgrepo.com :
-https://www.svgrepo.com/svg/8377/plus
+
 
 Android Developers documentation code used
+Firebase tutorials code used

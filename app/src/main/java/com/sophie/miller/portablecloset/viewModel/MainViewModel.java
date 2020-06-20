@@ -18,56 +18,15 @@ import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
 
-    //database
     public ClothesDatabase database;
-    //current clothes filter to get data from
-    //private ClothesFilter clothesFilter = new ClothesFilter();
-    //filtered clothes
     private MutableLiveData<ClothesFilter> filter = new MutableLiveData<>(new ClothesFilter());
-    //private LiveData<List<ClothingItem>> filteredClothes;
-    //styles lists
     private LiveData<List<String>> styleNames;
 
     MainViewModel(@NonNull Application application) {
         super(application);
         database = ClothesDatabase.getInstance(this.getApplication());
         styleNames = database.styleDao().loadStyleNames();
-        //set default filter value
-       // filteredClothes = Transformations.switchMap(filter, f -> filterClothes());
     }
-
-
-    /**
-     * takes filters as parameters and returns the filtered data
-
-    private LiveData<List<ClothingItem>> filterClothes() {
-        filteredClothes = null;
-        String size = clothesFilter.getSizeFilter();
-        int style = clothesFilter.getStyleFilter();
-        int color = clothesFilter.getColorFilter();
-        //booleans for simpler orientation
-        boolean hasSizeFilter = (!size.equals(""));
-        boolean hasStyleFilter = (style != -1);
-        boolean hasColorFilter = (color != -1);
-        //filtering process
-        if (hasSizeFilter && hasStyleFilter && hasColorFilter) {
-            return database.clothingItemDao().getFilteredClothesBySizeStyleColor(size, style, color);
-        } else if (hasSizeFilter && hasStyleFilter) {
-            return database.clothingItemDao().getFilteredClothesBySizeStyle(size, style);
-        } else if (hasSizeFilter && hasColorFilter) {
-            return database.clothingItemDao().getFilteredClothesBySizeColor(size, color);
-        } else if (hasSizeFilter) {
-            return database.clothingItemDao().getFilteredClothesBySize(size);
-        } else if (hasStyleFilter && hasColorFilter) {
-            return database.clothingItemDao().getFilteredClothesByStyleColor(style, color);
-        } else if (hasStyleFilter) {
-            return database.clothingItemDao().getFilteredClothesByStyle(style);
-        } else if (hasColorFilter) {
-            return database.clothingItemDao().getFilteredClothesByColor(color);
-        } else {
-            return database.clothingItemDao().loadAllClothes();
-        }
-    }*/
 
     /**
      * @return list of my clothes
@@ -78,7 +37,7 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * setFilter
-     * @param filter
+     * @param filter new clothes filter
      */
     public void setFilter(ClothesFilter filter) {
         this.filter.postValue(filter);
@@ -100,12 +59,4 @@ public class MainViewModel extends AndroidViewModel {
         }
         return database;
     }
-
-    /**
-     * set filter
-
-    public void setFilter(ClothesFilter filter) {
-        this.clothesFilter = filter;
-        this.filter.postValue(clothesFilter);
-    }     */
 }

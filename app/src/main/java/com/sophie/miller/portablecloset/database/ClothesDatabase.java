@@ -17,7 +17,6 @@ public abstract class ClothesDatabase extends RoomDatabase {
 
     public static ClothesDatabase getInstance(Context context) {
         if (database == null) {
-            //.allowMainThreadQueries() temporary for testing
             synchronized (OBJECT) {
                 database = Room.databaseBuilder(context.getApplicationContext(), ClothesDatabase.class, ClothesDatabase.DATABASE_NAME).allowMainThreadQueries().build();
             }
